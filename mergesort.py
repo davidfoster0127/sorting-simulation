@@ -2,12 +2,11 @@ import matplotlib
 import math
 import numpy as np
 
-def mergesort(arr) :
+def mergesort(arr):
     n = len(arr)
     half = n / 2
 
     if ( n > 1):
-
         left = arr[:math.floor(half)]
         right = arr[math.floor(half):]
         mergesort(left)
@@ -19,7 +18,6 @@ def merge(arr, left, right):
     i = 0
     j = 0
     k = 0
-
     while i < len(left) and j < len(right):
         if left[i] <= right[j]:
             arr[k] = left[i]

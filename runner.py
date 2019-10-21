@@ -17,7 +17,7 @@ def plotTC(fn, nTests):
     x = []
     y = []
     arr = []
-    for j in range(0, 1000):
+    for j in range(0, 25):
         arr.append(j)
         
     arr.reverse() 
@@ -32,8 +32,8 @@ def plotTC(fn, nTests):
 def main():
 
     plotTC(bubblesort, 10)
-    #plotTC(quicksortstarter, 10)
-    #plotTC(mergesort, 10)
+    plotTC(quicksortstarter, 10)
+    plotTC(mergesort, 10)
     plotTC(insertionsort, 10)
     plotTC(selectionsort, 10)
     pyplot.show()
