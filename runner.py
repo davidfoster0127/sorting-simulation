@@ -19,7 +19,7 @@ def plotTC(fn, nTests):
     x = []
     y = []
     arr = []
-    for j in range(0, 1000):
+    for j in range(0, 25):
         arr.append(j)
 
     arr.reverse()
@@ -68,7 +68,6 @@ def main():
     # plotTC(insertionsort, 10)
     # plotTC(selectionsort, 10)
     # pyplot.show()
-
 
 if __name__ == "__main__":
     main()
