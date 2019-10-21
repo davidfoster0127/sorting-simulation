@@ -3,7 +3,7 @@ import math
 
 def mergesort(arr) :
     n = len(arr)
-    half = math.floor(n / 2);
+
     if ( n > 0):
         left = arr.copy()
         right = arr.copy()
