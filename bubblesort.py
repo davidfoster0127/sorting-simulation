@@ -1,3 +1,9 @@
+from matplotlib import pyplot
+import numpy 
+import timeit
+import random
+
+from functools import partial
 def bubblesort(arr):
     n = len(arr)
     cPass = 1
