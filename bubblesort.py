@@ -17,5 +17,30 @@ def bubblesort(arr):
                 arr[i+1] = arr[i]
                 arr[i] = temp
                 done = True
-    return arr            
-print(bubblesort([5,4,3,2,1]))
+    return arr
+
+def bubblesort2(arr):
+    memory = 0
+
+    n = len(cp)
+    memory += n
+
+    done = True
+    memory += 1
+
+    temp = ''
+    memory += 1
+
+    while done:
+        done = False
+        for i in range(0, n - 1):
+            if cp[i] > cp[i + 1]:
+                temp = cp[i + 1]
+                cp[i + 1] = cp[i]
+                cp[i] = temp
+                done = True
+
+    return cp, memory
+
+
+# print(bubblesort([5,4,3,2,1]))

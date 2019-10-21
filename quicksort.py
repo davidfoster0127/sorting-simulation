@@ -29,4 +29,4 @@ def quicksortstarter(arr):
     return arr
 
 
-print(quicksortstarter([5,4,3,2,1]))
+# print(quicksortstarter([5,4,3,2,1]))

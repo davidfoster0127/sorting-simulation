@@ -4,11 +4,11 @@ import timeit
 import random
 import numpy
 
-from bubblesort import bubblesort
+from bubblesort import bubblesort, bubblesort2
 from quicksort import quicksortstarter
 from mergesort import mergesort
 from selectionsort import selectionsort
-from insertionsort import insertionsort
+from insertionsort import insertionsort, insertionsort2
 
 
 def test(arr):
@@ -31,19 +31,72 @@ def plotTC(fn, nTests):
         y.append(t)
     p1 = pyplot.plot(x, y, 'o')
 
+def getAvgRuntime(fn, data, iterations=5):
+
+    times = []
+
+    for i in range(0, iterations):
+        cp = data.copy()
+        timer = timeit.Timer(partial(fn, cp))
+        t = timer.timeit(1)
+        times.append(t)
+
+    total = 0
+    for ti in times:
+        total += ti
+    avg = total/len(times)
+
+    print("times = "+str(times))
+    return avg
+
+
 
 def main():
     with open('data/guids.txt') as dataFile:
         lines = dataFile.readlines()
 
-    for i in range(1, 6):
-        arr1 = lines[0:5000]
+    
 
-        testNTimer = timeit.Timer(partial(bubblesort, arr1))
-        t = testNTimer.timeit(number=1)
+    dataSizes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] # reasonable sizes
+    averages = []
 
-        print('time = '+str(t))
-    # print(arr1)
+    for size in dataSizes:
+        avg = getAvgRuntime(bubblesort, lines[0:size])
+        averages.append(avg)
+    p1 = pyplot.plot(dataSizes, averages, '-', label='bubble')
+
+    averages = []
+
+    for size in dataSizes:
+        avg = getAvgRuntime(insertionsort, lines[0:size])
+        averages.append(avg)
+    p2 = pyplot.plot(dataSizes, averages, '-', label='insert')
+
+    averages = []
+
+    for size in dataSizes:
+        avg = getAvgRuntime(selectionsort, lines[0:size])
+        averages.append(avg)
+    p3 = pyplot.plot(dataSizes, averages, '-', label='selection')
+
+    averages = []
+
+    for size in dataSizes:
+        avg = getAvgRuntime(quicksortstarter, lines[0:size])
+        averages.append(avg)
+    p4 = pyplot.plot(dataSizes, averages, '-', label='quick')
+
+    averages = []
+
+    for size in dataSizes:
+        avg = getAvgRuntime(mergesort, lines[0:size])
+        averages.append(avg)
+    p4 = pyplot.plot(dataSizes, averages, '-', label='merge')
+
+
+    pyplot.legend()
+    pyplot.show()
+
 
     # read in data files
     # format data into sortable ready form

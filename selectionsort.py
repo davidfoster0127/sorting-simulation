@@ -10,4 +10,4 @@ def selectionsort(arr):
         arr[posMin] = temp
     return arr
 
-print(selectionsort([5,4,3,2,1]))
+# print(selectionsort([5,4,3,2,1]))

@@ -37,4 +37,4 @@ def merge(arr, left, right):
         j = j + 1
     return arr
 
-print(mergesort([5,4,3,2,1]))
+# print(mergesort([5,4,3,2,1]))
