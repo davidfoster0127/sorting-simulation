@@ -16,7 +16,7 @@ class SortingData:
         print("Init SortingData")
 
         self.dataBySize = {}
-        self.loadDataBySize(1000)
+        self.loadDataBySize(10000)
 
 
     def loadDataBySize(self, maxSize):

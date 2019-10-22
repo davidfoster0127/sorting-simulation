@@ -28,6 +28,7 @@ def doRunsBySize(sorts, data):
             results[s.name][dname][0] = {}
             results[s.name][dname][0]['time'] = 0
             results[s.name][dname][0]['space'] = 0
+            results[s.name][dname][0]['std'] = 0
             for dsize in data.dataSizes:
                 results[s.name][dname][dsize] = {}
 
@@ -36,16 +37,18 @@ def doRunsBySize(sorts, data):
         for s in sorts:
             for dsize in data.dataSizes:
                 totaltime = 0
+                times = []
                 for iteration in range(0, avgIterations):
                     print(f"Iteration {iteration} for {s.name} on {dname} of size {dsize}")
                     datacopy = rawData[dname][dsize].copy()
                     timer = timeit.Timer(partial(s.sort, datacopy))
                     t = timer.timeit(1)
+                    times.append(t)
                     totaltime += t
                 avg = totaltime / avgIterations
-                # TODO: calculate standard deviation
                 results[s.name][dname][dsize]['time'] = avg
                 results[s.name][dname][dsize]['space'] = s.spaceUsed
+                results[s.name][dname][dsize]['std'] = np.std(times)
                 # TODO: maybe output stats here instead of at the end
 
     return results
@@ -84,7 +87,6 @@ def displayResults(results):
     for dname in dataNames:
         pyplot.subplot(subplot)
         subplot += 1
-
         for sname in sortNames:
             averages = []
             for dsize in dataSizes:
@@ -131,9 +133,8 @@ def main():
     results = doRunsBySize(sorts, sdata)
 
     displayResults(results)
-    time.time()
 
-    with open(f'results-{time.time()}.json', 'w') as file_object:
+    with open(f'results/results-{time.time()}.json', 'w') as file_object:
         json.dump(results, file_object)
 
 
