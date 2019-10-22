@@ -12,7 +12,7 @@ class BubbleSort:
         self.spaceUsed = n
 
         done = True
-        self.spaceUsed += 2
+        self.spaceUsed += 1
 
         while done:
             done = False

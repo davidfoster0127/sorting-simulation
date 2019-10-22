@@ -15,38 +15,37 @@ import sortingdata
 
 
 def doRunsBySize(sorts, data):
-    rawData = data.getRawDataSets()
+    rawData = data.dataBySize
 
     avgIterations = 5
-    numChunks = 5
-
-    dataSizes = []
-    for dsize in range(0, data.dataSize + 1, math.floor(data.dataSize / numChunks)):
-        if dsize == 0:
-            dsize = 1
-        dataSizes.append(dsize)
 
     results = {}
     for s in sorts:
         results[s.name] = {}
-        for dname in data.dataCategories:
+        for dname in data.dataSets:
             results[s.name][dname] = {}
-            for dsize in dataSizes:
+            results[s.name][dname][0] = {}
+            results[s.name][dname][0]['time'] = 0
+            results[s.name][dname][0]['space'] = 0
+            for dsize in data.dataSizes:
                 results[s.name][dname][dsize] = {}
 
-    for dname in data.dataCategories:
+
+    for dname in data.dataSets:
         for s in sorts:
-            for dsize in dataSizes:
+            for dsize in data.dataSizes:
                 totaltime = 0
                 for iteration in range(0, avgIterations):
                     print(f"Iteration {iteration} for {s.name} on {dname} of size {dsize}")
-                    datacopy = rawData[dname].copy()
-                    timer = timeit.Timer(partial(s.sort, datacopy[0:dsize]))
+                    datacopy = rawData[dname][dsize].copy()
+                    timer = timeit.Timer(partial(s.sort, datacopy))
                     t = timer.timeit(1)
                     totaltime += t
                 avg = totaltime / avgIterations
+                # TODO: calculate standard deviation
                 results[s.name][dname][dsize]['time'] = avg
                 results[s.name][dname][dsize]['space'] = s.spaceUsed
+                # TODO: maybe output stats here instead of at the end
 
     return results
 
@@ -74,6 +73,7 @@ def displayResults(results):
 
             pyplot.plot(dataSizes, averages, '-', label=sname)
 
+        pyplot.yscale('log')
         pyplot.title(f'{dname} runtime')
         pyplot.legend()
         pyplot.show()
@@ -106,13 +106,13 @@ def main():
         # data sortedness
     # 4 different types of data
         # 2 synthetic distributions
-            # bell curve
-            # perfect?
+            # normal
+            # lognormal
         # 2 real world data sets
             # zipcodes
             # birthdate
 
-    sdata = sortingdata.SortingData(100000)
+    sdata = sortingdata.SortingData()
 
     bsort = bubblesort.BubbleSort()
     isort = insertionsort.InsertionSort()
@@ -124,11 +124,10 @@ def main():
 
     results = doRunsBySize(sorts, sdata)
 
-    # displayResults(results)
+    displayResults(results)
 
-    with open('results.json', 'w') as file_object:
+    with open('results1.json', 'w') as file_object:
         json.dump(results, file_object)
-        # file_object.write(results.__str__())
 
 
 def generateSyntheticNumbers():

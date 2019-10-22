@@ -1,37 +1,37 @@
+import math
+
 
 class SortingData:
 
-    # dataCategories = ["guids", "birthdays", "phonenumbers", "zip9s"]
-    dataCategories = ["guids"]
+    dataSets = ["real-dates", "real-ids", "synth-lognormal", "synth-normal"]
 
+    maxDataSize = 10000
+    dataIntervals = 10
+    dataIntervalSize = 1000
+    dataSizes = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 
-    def __init__(self, dataSize):
-        self.data = {}
-        self.dataSize = dataSize
+    fileSizes = ['1k', '2k', '3k', '4k', '5k', '6k', '7k', '8k', '9k', '10k']
 
-        for category in self.dataCategories:
-            self.data[category] = {}
-
-        self.loadData()
+    def __init__(self):
         print("Init SortingData")
 
-    def loadData(self):
-        print("Loading data...")
+        self.dataBySize = {}
+        self.loadDataBySize(10000)
 
-        for category in self.dataCategories:
-            with open('data/'+category+'.txt') as dataFile:  # read in raw data
-                lines = dataFile.readlines()
-                self.data[category]["raw"] = lines[0:self.dataSize - 1]
 
-        # maybe could read in files of different sortedness here or do some other processing on it
-        # with open('data/guids_semisorted.txt') as dataFile:
-        #     lines = dataFile.readlines()
-        #     data["guids"] = lines[0:dataLength-1]
+    def loadDataBySize(self, maxSize):
+        print("Loading data by size...")
 
-    def getRawDataSets(self):
-        toReturn = {}
+        if maxSize != self.maxDataSize:
+            self.dataIntervalSize = math.floor(maxSize/self.dataIntervals)
+            self.dataSizes = []
+            for i in range(self.dataIntervalSize,maxSize+1, self.dataIntervalSize):
+                self.dataSizes.append(i)
+        print(self.dataSizes)
 
-        for category in self.dataCategories:
-            toReturn[category] = self.data[category]["raw"]
-
-        return toReturn
+        for dset in self.dataSets:
+            self.dataBySize[dset] = {}
+            for i in range(len(self.fileSizes)):
+                with open(f'data/{dset}-{self.fileSizes[i]}.txt', 'r') as dataFile:
+                    lines = dataFile.readlines()
+                    self.dataBySize[dset][self.dataSizes[i]] = lines[0:self.dataSizes[i]]
