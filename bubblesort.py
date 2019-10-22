@@ -1,4 +1,18 @@
 
+import numpy as np
+
+def bubblesort(arr):
+    n = len(arr)
+    cPass = 1
+    done = True
+
+    while done:
+        done = False
+        for i in range(0, n - cPass):
+            if arr[i] > arr[i+1]:
+                arr[i], arr[i+1] = arr[i+1], arr[i]
+                done = True
+    return arr   
 
 class BubbleSort:
 
@@ -24,4 +38,3 @@ class BubbleSort:
                     arr[i] = temp
                     done = True
         return arr
-
