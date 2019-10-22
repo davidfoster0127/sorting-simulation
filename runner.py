@@ -3,6 +3,7 @@ from functools import partial
 import timeit
 import math
 import json
+import time
 import random
 import numpy as np
 
@@ -65,31 +66,36 @@ def displayResults(results):
     for dsize in results[sortNames[0]][dataNames[0]].keys():
         dataSizes.append(dsize)
 
+    pyplot.figure()
+    subplot = 241
+
     for dname in dataNames:
+        pyplot.subplot(subplot)
+        subplot += 1
         for sname in sortNames:
             averages = []
             for dsize in dataSizes:
                 averages.append(results[sname][dname][dsize]['time'])
-
             pyplot.plot(dataSizes, averages, '-', label=sname)
-
-        pyplot.yscale('log')
         pyplot.title(f'{dname} runtime')
         pyplot.legend()
-        pyplot.show()
+        pyplot.grid(True)
 
     for dname in dataNames:
+        pyplot.subplot(subplot)
+        subplot += 1
+
         for sname in sortNames:
             averages = []
             for dsize in dataSizes:
                 averages.append(results[sname][dname][dsize]['space'])
-
             pyplot.plot(dataSizes, averages, '-', label=sname)
-
         pyplot.title(f'{dname} space used')
         pyplot.legend()
-        pyplot.show()
+        pyplot.grid(True)
 
+    pyplot.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
+    pyplot.show()
 
 def main():
     # read in data files
@@ -125,8 +131,9 @@ def main():
     results = doRunsBySize(sorts, sdata)
 
     displayResults(results)
+    time.time()
 
-    with open('results1.json', 'w') as file_object:
+    with open(f'results-{time.time()}.json', 'w') as file_object:
         json.dump(results, file_object)
 
 

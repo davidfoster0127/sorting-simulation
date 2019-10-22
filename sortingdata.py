@@ -16,7 +16,7 @@ class SortingData:
         print("Init SortingData")
 
         self.dataBySize = {}
-        self.loadDataBySize(10000)
+        self.loadDataBySize(1000)
 
 
     def loadDataBySize(self, maxSize):
@@ -27,7 +27,6 @@ class SortingData:
             self.dataSizes = []
             for i in range(self.dataIntervalSize,maxSize+1, self.dataIntervalSize):
                 self.dataSizes.append(i)
-        print(self.dataSizes)
 
         for dset in self.dataSets:
             self.dataBySize[dset] = {}
