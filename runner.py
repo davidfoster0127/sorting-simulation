@@ -2,8 +2,9 @@ from matplotlib import pyplot
 from functools import partial
 import timeit
 import math
+import json
 import random
-import numpy
+import numpy as np
 
 import bubblesort
 import insertionsort
@@ -16,11 +17,11 @@ import sortingdata
 def doRunsBySize(sorts, data):
     rawData = data.getRawDataSets()
 
-    iterations = 5
-    sizeChunks = 10
+    avgIterations = 5
+    numChunks = 5
 
     dataSizes = []
-    for dsize in range(0, data.dataSize + 1, math.floor(data.dataSize / sizeChunks)):
+    for dsize in range(0, data.dataSize + 1, math.floor(data.dataSize / numChunks)):
         if dsize == 0:
             dsize = 1
         dataSizes.append(dsize)
@@ -37,13 +38,13 @@ def doRunsBySize(sorts, data):
         for s in sorts:
             for dsize in dataSizes:
                 totaltime = 0
-                for iteration in range(0, iterations):
+                for iteration in range(0, avgIterations):
                     print(f"Iteration {iteration} for {s.name} on {dname} of size {dsize}")
                     datacopy = rawData[dname].copy()
                     timer = timeit.Timer(partial(s.sort, datacopy[0:dsize]))
                     t = timer.timeit(1)
                     totaltime += t
-                avg = totaltime / iterations
+                avg = totaltime / avgIterations
                 results[s.name][dname][dsize]['time'] = avg
                 results[s.name][dname][dsize]['space'] = s.spaceUsed
 
@@ -111,7 +112,7 @@ def main():
             # zipcodes
             # birthdate
 
-    sdata = sortingdata.SortingData(1000)
+    sdata = sortingdata.SortingData(100000)
 
     bsort = bubblesort.BubbleSort()
     isort = insertionsort.InsertionSort()
@@ -123,9 +124,34 @@ def main():
 
     results = doRunsBySize(sorts, sdata)
 
-    displayResults(results)
+    # displayResults(results)
+
+    with open('results.json', 'w') as file_object:
+        json.dump(results, file_object)
+        # file_object.write(results.__str__())
+
+
+def generateSyntheticNumbers():
+    mu, sigma = 3., 1.
+    # s = np.random.lognormal(mu, sigma, 10000)
+
+    # count, bins, ignored = pyplot.hist(s, 100, normed=True, align='mid')
+    # x = np.linspace(min(bins), max(bins), 10000)
+    # pdf = (np.exp(-(np.log(x) - mu) ** 2 / (2 * sigma ** 2))
+    #              / (x * sigma * np.sqrt(2 * np.pi)))
+    # pyplot.plot(x, pdf, linewidth=2, color='r')
+    # pyplot.axis('tight')
+    # pyplot.show()
+
+    for n in range(1000, 10001, 1000):
+        s = np.random.lognormal(mu, sigma, n)
+
+        with open(f'data/synth-lognormal-{math.floor(n/1000)}k.txt', 'w') as file_object:
+            for num in s:
+                file_object.write(num.__str__()+'\n')
 
 
 if __name__ == "__main__":
+    # generateSyntheticNumbers()
     main()
 

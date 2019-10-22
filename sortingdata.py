@@ -1,7 +1,9 @@
 
 class SortingData:
 
-    dataCategories = ["guids", "birthdays", "phonenumbers", "zip9s"]
+    # dataCategories = ["guids", "birthdays", "phonenumbers", "zip9s"]
+    dataCategories = ["guids"]
+
 
     def __init__(self, dataSize):
         self.data = {}
