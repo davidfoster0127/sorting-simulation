@@ -1,15 +1,27 @@
-def insertionsort(arr):
-    n = len(arr)
-    for nextPos in range(1, n):
-        insert(arr, nextPos)
-    return arr 
-def insert(arr, nextPos):
-    nextValue = arr[nextPos]
-    while nextPos > 0 and nextValue < arr[nextPos-1] : 
-        arr[nextPos] = arr[nextPos -1]
-        nextPos = nextPos - 1
-    arr[nextPos] = nextValue
 
-print(insertionsort([5,1,2,4,6]))
 
-    
+class InsertionSort:
+
+    def __init__(self):
+        self.spaceUsed = 0
+        self.name = "InsertionSort"
+        print("Init InsertionSort")
+
+    def sort(self, arr):
+        n = len(arr)
+        self.spaceUsed = n
+
+        for nextPos in range(1, n):
+            self.insert(arr, nextPos)
+
+        return arr
+
+    def insert(self, arr, nextPos):
+        nextValue = arr[nextPos]
+        self.spaceUsed += 1
+
+        while nextPos > 0 and nextValue < arr[nextPos - 1]:
+            arr[nextPos] = arr[nextPos - 1]
+            nextPos = nextPos - 1
+
+        arr[nextPos] = nextValue

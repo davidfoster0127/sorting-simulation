@@ -14,5 +14,27 @@ def bubblesort(arr):
                 done = True
     return arr   
 
+class BubbleSort:
 
-print(bubblesort([99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,76,75,74,73,72,71,79,69,68,67,66,65,63,62,61,59,58,57,56,55,54,53,52,52]))
+    def __init__(self):
+        self.spaceUsed = 0
+        self.name = "BubbleSort"
+        print("Init BubbleSort")
+
+    def sort(self, arr):
+        n = len(arr)
+        self.spaceUsed = n
+
+        done = True
+        temp = ''
+        self.spaceUsed += 2
+
+        while done:
+            done = False
+            for i in range(0, n - 1):
+                if arr[i] > arr[i + 1]:
+                    temp = arr[i + 1]
+                    arr[i + 1] = arr[i]
+                    arr[i] = temp
+                    done = True
+        return arr
