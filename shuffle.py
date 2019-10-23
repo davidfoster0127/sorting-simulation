@@ -5,8 +5,8 @@ from math import floor
 class ShuffledData:
 
     #dataCategories = ["guids", "birthdays", "phonenumbers", "zip9s"]
-    dataCategories = ["synth-lognormal-5k", "real-ids-5k", "synth-normal-5k",]
-    #dataCategories = ["synth-lognormal-10k", "real-ids-10k", "synth-normal-10k"]
+    #dataCategories = ["synth-lognormal-5k", "real-ids-5k", "synth-normal-5k",]
+    dataCategories = ["synth-lognormal-10k", "real-ids-10k", "synth-normal-10k","real-dates-10k"]
     def __init__(self, dataSize, inversionPerctage):
         self.data = {}
         self.dataSize = dataSize
@@ -46,4 +46,4 @@ class ShuffledData:
     
         return inv_count 
   
-ShuffledData(5000, 3).loadShuffledData()
+ShuffledData(10000, 3).loadShuffledData()
