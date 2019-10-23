@@ -11,8 +11,19 @@ class ShuffledData:
         self.data = {}
         self.dataSize = dataSize
         self.inversionPerctage = (inversionPerctage % 10) / 10
+        self.loadFullySorted()
 
  
+    def loadFullySorted(self):
+        for category in self.dataCategories:
+            with open('data/'+category+'.txt') as dataFile:
+                lines = dataFile.readlines()
+                arr = [currentfile for currentfile in lines[0:self.dataSize - 1]]
+                arr.sort()
+            with open('data/'+category+'_fully_sorted.txt',"w+") as  file:
+                for line in arr:
+                    file.write(line)
+
     def loadShuffledData(self): 
         
         for category in self.dataCategories:
@@ -25,6 +36,7 @@ class ShuffledData:
             with open('data/'+category+'_'+str(self.inversionPerctage)+'_sorted.txt',"w+") as  file:
                 for line in arr:
                     file.write(line)
+        
         
     def randomize(self,arr):
         n = len(arr)
@@ -46,4 +58,4 @@ class ShuffledData:
     
         return inv_count 
   
-ShuffledData(10000, 3).loadShuffledData()
+ShuffledData(10000, 1).loadShuffledData()
