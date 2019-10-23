@@ -49,12 +49,45 @@ def doRunsBySize(sorts, data):
                 results[s.name][dname][dsize]['time'] = avg
                 results[s.name][dname][dsize]['space'] = s.spaceUsed
                 results[s.name][dname][dsize]['std'] = np.std(times)
-                # TODO: maybe output stats here instead of at the end
 
     return results
 
 
-def displayResults(results):
+def doRunsBySortedness(sorts, data):
+    rawData = data.dataBySortedness
+
+    avgIterations = 5
+
+    results = {}
+    for s in sorts:
+        results[s.name] = {}
+        for dname in data.dataSets:
+            results[s.name][dname] = {}
+            for sortedness in data.dataSortedness:
+                results[s.name][dname][sortedness] = {}
+
+
+    for dname in data.dataSets:
+        for s in sorts:
+            for sortedness in data.dataSortedness:
+                totaltime = 0
+                times = []
+                for iteration in range(0, avgIterations):
+                    print(f"Iteration {iteration} for {s.name} on {dname} of sortedness {sortedness}")
+                    datacopy = rawData[dname][sortedness].copy()
+                    timer = timeit.Timer(partial(s.sort, datacopy))
+                    t = timer.timeit(1)
+                    times.append(t)
+                    totaltime += t
+                avg = totaltime / avgIterations
+                results[s.name][dname][sortedness]['time'] = avg
+                results[s.name][dname][sortedness]['space'] = s.spaceUsed
+                results[s.name][dname][sortedness]['std'] = np.std(times)
+
+    return results
+
+
+def displayResults(results, fromfile=False):
 
     sortNames = []
     dataNames = []
@@ -78,11 +111,15 @@ def displayResults(results):
         for sname in sortNames:
             averages = []
             for dsize in dataSizes:
-                averages.append(results[sname][dname][dsize]['time'])
+                if fromfile:
+                    averages.append(results[sname][dname][str(dsize)]['time'])
+                else:
+                    averages.append(results[sname][dname][dsize]['time'])
             pyplot.plot(dataSizes, averages, '-', label=sname)
         pyplot.title(f'{dname} runtime')
         pyplot.legend()
         pyplot.grid(True)
+        pyplot.yscale('log')
 
     for dname in dataNames:
         pyplot.subplot(subplot)
@@ -90,7 +127,10 @@ def displayResults(results):
         for sname in sortNames:
             averages = []
             for dsize in dataSizes:
-                averages.append(results[sname][dname][dsize]['space'])
+                if fromfile:
+                    averages.append(results[sname][dname][str(dsize)]['space'])
+                else:
+                    averages.append(results[sname][dname][dsize]['space'])
             pyplot.plot(dataSizes, averages, '-', label=sname)
         pyplot.title(f'{dname} space used')
         pyplot.legend()
@@ -99,27 +139,8 @@ def displayResults(results):
     pyplot.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
     pyplot.show()
 
+
 def main():
-    # read in data files
-    # format data into sortable ready form
-
-    # do every sort on each set of data, returning and collecting runtime and space used for each run
-
-    # use output to create 16 graphs
-    # 2 different y-axis,
-        # runtime
-        # space used
-    # 2 different x-axis
-        # data size
-        # data sortedness
-    # 4 different types of data
-        # 2 synthetic distributions
-            # normal
-            # lognormal
-        # 2 real world data sets
-            # zipcodes
-            # birthdate
-
     sdata = sortingdata.SortingData()
 
     bsort = bubblesort.BubbleSort()
@@ -131,11 +152,25 @@ def main():
     sorts = [bsort, isort, ssort, qsort, msort]
 
     results = doRunsBySize(sorts, sdata)
-
     displayResults(results)
-
-    with open(f'results/results-{time.time()}.json', 'w') as file_object:
+    with open(f'results/results-bysize-{time.time()}.json', 'w') as file_object:
         json.dump(results, file_object)
+
+    results = doRunsBySortedness(sorts, sdata)
+    displayResults(results)
+    with open(f'results/results-bysortedness-{time.time()}.json', 'w') as file_object:
+        json.dump(results, file_object)
+
+    # readAndDisplayResults()
+
+
+def readAndDisplayResults():
+    # with open(f'results/results-good-10k-size.json', 'r') as file_object:
+    #     blob = json.load(file_object)
+    with open(f'results/results-good-10k-sortedness.json', 'r') as file_object:
+        blob = json.load(file_object)
+
+    displayResults(blob, True)
 
 
 def generateSyntheticNumbers():
