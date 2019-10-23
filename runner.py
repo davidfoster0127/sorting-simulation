@@ -4,7 +4,6 @@ import timeit
 import math
 import json
 import time
-import random
 import numpy as np
 
 import bubblesort
@@ -13,13 +12,17 @@ import selectionsort
 import quicksort
 import mergesort
 import sortingdata
+import shuffle
 
 
 def doRunsBySize(sorts, data):
+    # grab the data from the SortingData object
     rawData = data.dataBySize
 
+    # number of iterations we will get the average from
     avgIterations = 5
 
+    # pre-create map entries, add the 0 data point
     results = {}
     for s in sorts:
         results[s.name] = {}
@@ -32,7 +35,7 @@ def doRunsBySize(sorts, data):
             for dsize in data.dataSizes:
                 results[s.name][dname][dsize] = {}
 
-
+    # iterate over the datasets, the sorts, and data sizes and run each combination 5 times
     for dname in data.dataSets:
         for s in sorts:
             for dsize in data.dataSizes:
@@ -45,6 +48,7 @@ def doRunsBySize(sorts, data):
                     t = timer.timeit(1)
                     times.append(t)
                     totaltime += t
+                # calculate the average runtime and record it along with the spaceUsed and standard deviation
                 avg = totaltime / avgIterations
                 results[s.name][dname][dsize]['time'] = avg
                 results[s.name][dname][dsize]['space'] = s.spaceUsed
@@ -54,10 +58,13 @@ def doRunsBySize(sorts, data):
 
 
 def doRunsBySortedness(sorts, data):
+    # grab the data from the SortingData object
     rawData = data.dataBySortedness
 
+    # number of iterations we will get the average from
     avgIterations = 5
 
+    # pre-create map entries
     results = {}
     for s in sorts:
         results[s.name] = {}
@@ -66,7 +73,7 @@ def doRunsBySortedness(sorts, data):
             for sortedness in data.dataSortedness:
                 results[s.name][dname][sortedness] = {}
 
-
+    # iterate over the datasets, the sorts, and data sortedness and run each combination 5 times
     for dname in data.dataSets:
         for s in sorts:
             for sortedness in data.dataSortedness:
@@ -79,6 +86,7 @@ def doRunsBySortedness(sorts, data):
                     t = timer.timeit(1)
                     times.append(t)
                     totaltime += t
+                # calculate the average runtime and record it along with the spaceUsed and standard deviation
                 avg = totaltime / avgIterations
                 results[s.name][dname][sortedness]['time'] = avg
                 results[s.name][dname][sortedness]['space'] = s.spaceUsed
@@ -93,6 +101,7 @@ def displayResults(results, fromfile=False):
     dataNames = []
     dataSizes = []
 
+    # create arrays of the values to use for the plots (makes it easier to work with)
     for sname in results.keys():
         sortNames.append(sname)
 
@@ -105,6 +114,7 @@ def displayResults(results, fromfile=False):
     pyplot.figure()
     subplot = 241
 
+    # add the 4 runtime graphs to the figure
     for dname in dataNames:
         pyplot.subplot(subplot)
         subplot += 1
@@ -119,8 +129,9 @@ def displayResults(results, fromfile=False):
         pyplot.title(f'{dname} runtime')
         pyplot.legend()
         pyplot.grid(True)
-        pyplot.yscale('log')
+        # pyplot.yscale('log')
 
+    # add the 4 space used graphs to the figure
     for dname in dataNames:
         pyplot.subplot(subplot)
         subplot += 1
@@ -136,64 +147,64 @@ def displayResults(results, fromfile=False):
         pyplot.legend()
         pyplot.grid(True)
 
+    # add some padding and show the graphs
     pyplot.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
     pyplot.show()
 
 
 def main():
+    # create the data object and load the data from the files
     sdata = sortingdata.SortingData()
 
+    # create instances of each sorting object
     bsort = bubblesort.BubbleSort()
     isort = insertionsort.InsertionSort()
     ssort = selectionsort.SelectionSort()
     qsort = quicksort.QuickSort()
     msort = mergesort.MergeSort()
-
     sorts = [bsort, isort, ssort, qsort, msort]
 
+    # do runs by size, display the results, and record the results
     results = doRunsBySize(sorts, sdata)
-    displayResults(results)
+    displayResults(results)  # this pauses the code execution so we typically leave one of these clocks to execute
     with open(f'results/results-bysize-{time.time()}.json', 'w') as file_object:
         json.dump(results, file_object)
 
+    # do runs by sortedness, display the results, and record the results
     results = doRunsBySortedness(sorts, sdata)
     displayResults(results)
     with open(f'results/results-bysortedness-{time.time()}.json', 'w') as file_object:
         json.dump(results, file_object)
 
-    # readAndDisplayResults()
+    # comment out the above code use this to display a specific results file
+    # readAndDisplayResults('results/results-good-10k-sortedness.json')
 
 
-def readAndDisplayResults():
-    # with open(f'results/results-good-10k-size.json', 'r') as file_object:
-    #     blob = json.load(file_object)
-    with open(f'results/results-good-10k-sortedness.json', 'r') as file_object:
+def readAndDisplayResults(filename):
+    with open(filename, 'r') as file_object:
         blob = json.load(file_object)
 
     displayResults(blob, True)
 
 
 def generateSyntheticNumbers():
-    mu, sigma = 3., 1.
-    # s = np.random.lognormal(mu, sigma, 10000)
-
-    # count, bins, ignored = pyplot.hist(s, 100, normed=True, align='mid')
-    # x = np.linspace(min(bins), max(bins), 10000)
-    # pdf = (np.exp(-(np.log(x) - mu) ** 2 / (2 * sigma ** 2))
-    #              / (x * sigma * np.sqrt(2 * np.pi)))
-    # pyplot.plot(x, pdf, linewidth=2, color='r')
-    # pyplot.axis('tight')
-    # pyplot.show()
-
+    # generate synthetic lognormal distributions with sizes from 1k-10k and record each result
     for n in range(1000, 10001, 1000):
-        s = np.random.lognormal(mu, sigma, n)
-
+        s = np.random.lognormal(3., 1., n)
         with open(f'data/synth-lognormal-{math.floor(n/1000)}k.txt', 'w') as file_object:
+            for num in s:
+                file_object.write(num.__str__()+'\n')
+
+    # generate synthetic normal distributions with sizes from 1k-10k and record each result
+    for n in range(1000, 10001, 1000):
+        s = np.random.normal(100, 10, n)
+        with open(f'data/synth-normal-{math.floor(n/1000)}k.txt', 'w') as file_object:
             for num in s:
                 file_object.write(num.__str__()+'\n')
 
 
 if __name__ == "__main__":
-    # generateSyntheticNumbers()
+    # generateSyntheticNumbers()  # generated the synthetic numbers
+    # shuffle.ShuffledData(10000, 1)  # generates the files with different levels of sortedness
     main()
 
