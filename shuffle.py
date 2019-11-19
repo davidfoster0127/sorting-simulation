@@ -2,6 +2,7 @@ import numpy as np
 import random
 from math import floor
 
+
 class ShuffledData:
 
     #dataCategories = ["guids", "birthdays", "phonenumbers", "zip9s"]
@@ -58,4 +59,4 @@ class ShuffledData:
     
         return inv_count 
   
-ShuffledData(10000, 1).loadShuffledData()
+ShuffledData(10000, 3).loadShuffledData()
